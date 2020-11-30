@@ -75,13 +75,9 @@ class User extends Base
 
     public function verifyTest()
     {
-        //1. 获取Token
-        $token = Request::header("Access-Token");
+        //经过中间件统一认证，通过request()获取在中间件中写入的UID
+        $user_id = request()->uid;
+        return $this->build(['uid' => $user_id], "已登录"); //若获取不到密码
 
-
-        //2. 校验用户
-        $payload = JWT::verify($token);
-
-        return json($payload);
     }
 }

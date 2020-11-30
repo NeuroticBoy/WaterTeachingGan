@@ -32,6 +32,7 @@ abstract class Base
         $this->pageSize = (int)Request::param('page_size', Config::get('app.page_size'));
     }
 
+    //TODO: 把build提取成一个类，并从中间件中导入新类
     /**
      * @param $data
      * @param string $msg
