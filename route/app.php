@@ -12,3 +12,4 @@ use think\facade\Route;
 
 Route::get('hello/:name', 'index/hello');
 Route::POST('user/register', 'user/register');  //注册
+Route::POST('user/login', 'user/login');  //注册
