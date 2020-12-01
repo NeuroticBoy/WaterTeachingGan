@@ -24,3 +24,8 @@ Route::group('user', function () {
 Route::group('course', function () {
     Route::POST('', 'createCourse');
 })->prefix('course/')->middleware(['Login']);
+
+//Classes模块
+Route::group('class', function () {
+    Route::POST('', 'createClass');
+})->prefix('classes/')->middleware(['Login']);

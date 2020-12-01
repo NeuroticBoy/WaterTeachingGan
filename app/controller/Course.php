@@ -33,8 +33,8 @@ class Course extends Base
         $courseData["user_id"] = $userId;
 
         //3. 数据整形
-        $courseData["describ"] = trim($courseData["describ"]);
-        $courseData["title"] = trim($courseData["title"]);
+        if (array_key_exists('describ', $courseData)) $courseData["describ"] = trim($courseData["describ"]);
+        if (array_key_exists('title', $courseData)) $courseData["title"] = trim($courseData["title"]);
 
         //4. 校验数据
         try {
