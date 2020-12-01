@@ -30,8 +30,6 @@ class User extends Validate
     protected $message = [
         'name.require'      =>      '姓名不得为空',
         'name.max'          =>      '姓名不得大于20位',
-        'price.number'      =>      '价格必须是数字',
-        'price.between'     =>      '价格必须 1-100 之间',
         'email'             =>      '邮箱的格式错误',
         'email.unique'      =>      '邮箱已存在',
         'id.number'         =>      'id必须是数字',

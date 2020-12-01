@@ -10,8 +10,17 @@
 // +----------------------------------------------------------------------
 use think\facade\Route;
 
-Route::get('hello/:name', 'index/hello');
-Route::POST('user/register', 'user/register');  //注册
-Route::POST('user/login', 'user/login');
-Route::GET('user/test', 'user/verifyTest')
-    ->middleware(['Login']);  //登录验证
+// Route::get('hello/:name', 'index/hello');
+
+//User 模块
+Route::group('user', function () {
+    Route::POST('register', 'register');  //注册
+    Route::POST('login', 'login');
+    Route::GET('test', 'verifyTest')
+        ->middleware(['Login']);  //登录验证
+})->prefix('user/');
+
+//Course模块
+Route::group('course', function () {
+    Route::POST('', 'createCourse');
+})->prefix('course/')->middleware(['Login']);
