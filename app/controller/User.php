@@ -44,7 +44,7 @@ class User extends Base
         //4. 写入用户表
         $user = UserModel::create($register, $write_field)->visible($visible_field);
 
-        return $this->build($register['password']);
+        return $this->build($user);
     }
 
     public function login()

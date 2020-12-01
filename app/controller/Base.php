@@ -40,7 +40,7 @@ abstract class Base
      * @param string $type
      * @return Response
      */
-    protected function build($data, string $msg = 'success', int $code = 1000, string $type = 'json') : Response
+    protected function build($data, string $msg = 'success', int $code = 0, string $type = 'json') : Response
     {
         //标准api结构生成
         $result = [
