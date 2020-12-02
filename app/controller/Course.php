@@ -8,6 +8,7 @@ use app\validate\Course as CourseVerify;
 use think\facade\Request;
 
 use app\model\Course as CourseModel;
+use app\model\User as UserModel;
 use app\controller\Base;
 
 class Course extends Base
@@ -79,5 +80,30 @@ class Course extends Base
 
         //6. 返回课程信息
         return $this->build($course, "成功");
+    }
+
+    
+    public function getTeach()
+    {
+        $visible_field = ['title', 'describ', 'id'];  //输出隐藏字段
+
+        //1. 获取用户ID
+        $userId = request()->uid;
+
+        //2. 获取课程列表
+        $user = UserModel::find($userId);
+        $courses = $user->course()->visible($visible_field)->select();
+
+        if ($courses->isEmpty()) {
+            return $this->build(NULL, "无课程")->code(404);
+        }
+
+        //3. 获取班级列表
+        foreach ($courses as $course) {
+            $course->classes = $course->classes()->visible($visible_field)->select();
+        }
+
+        //4. 返回数据
+        return $this->build($courses);
     }
 }

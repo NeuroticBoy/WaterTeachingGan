@@ -44,4 +44,5 @@ class Classes extends Base
         //5. 返回课程信息
         return $this->build($course, "成功");
     }
+
 }
