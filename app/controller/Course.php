@@ -82,10 +82,10 @@ class Course extends Base
         return $this->build($course, "成功");
     }
 
-    
+
     public function getTeach()
     {
-        $visible_field = ['title', 'describ', 'id'];  //输出隐藏字段
+        $visible_field = ['title', 'describ', 'id', 'code'];  //定义输出字段
 
         //1. 获取用户ID
         $userId = request()->uid;

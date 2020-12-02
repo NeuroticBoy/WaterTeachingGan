@@ -30,4 +30,5 @@ Route::group('course', function () {
 //Classes模块
 Route::group('class', function () {
     Route::POST('', 'createClass'); //创建班级
+    Route::GET('join/:joinCode', 'joinClass'); //加入班级
 })->prefix('classes/')->middleware(['Login']);

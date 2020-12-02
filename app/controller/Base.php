@@ -57,6 +57,14 @@ abstract class Base
     }
 
     /**
+     * 生成加课码
+     * @return String
+     */
+    protected function createCode() {
+        return strtoupper(iconv_substr(md5(uniqid()),0,4));
+    }
+
+    /**
      * @param $name
      * @param $arguments
      * @return Response
