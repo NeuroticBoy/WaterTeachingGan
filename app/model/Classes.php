@@ -12,6 +12,6 @@ class Classes extends Model
     //一对多
     public function Member()
     {
-        return $this->hasMany(Member::class);
+        return $this->hasMany(Member::class,'classes_id','id');
     }
 }

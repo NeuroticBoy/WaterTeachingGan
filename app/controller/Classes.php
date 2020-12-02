@@ -99,4 +99,29 @@ class Classes extends Base
         //4. 返回数据
         return $this->build($member);
     }
+
+    public function getMember()
+    {
+        //0. 定义可见字段
+        $visible_field = ['user_id', 'nickname', "create_time"];
+
+        //1. 获取班级ID
+        $classId = Request::route('class_id');
+
+        //2. 获取当前用户ID
+        $user_id = request()->uid;
+
+        //3. 获取班级信息
+        $class = ClassesModel::find($classId);
+
+        //4. 判断是否为课程创建者
+        $curUser = $class->course()->field('user_id')->find();
+        if ($curUser["user_id"] !== $user_id) {
+            return $this->build(NULL,"没有操作权限",403)->code(403);
+        }
+
+        //4. 检索数据
+        $members = $class->member()->visible($visible_field)->select();
+        return $this->build($members);
+    }
 }
