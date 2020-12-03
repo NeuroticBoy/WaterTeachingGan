@@ -16,8 +16,8 @@ use think\facade\Route;
 Route::group('user', function () {
     Route::POST('register', 'register');  //注册
     Route::POST('login', 'login');  //登录
-    Route::GET('test', 'verifyTest')    //登录测试
-        ->middleware(['Login']);  //登录验证
+    Route::POST('password', 'setPassowrd')->middleware(['Login']);  //登录验证;  //登录
+    Route::GET('test', 'verifyTest')->middleware(['Login']);  //登录验证
 })->prefix('user/');
 
 //Course模块

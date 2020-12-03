@@ -16,8 +16,10 @@ class User extends Validate
      */
     protected $rule = [
         'username|用户名'               =>      'require|max:20',
-        'password|密码'                 =>      'require|max:32',
-        'confirm|二次密码输入'          =>      'confirm:password|max:32',
+        'password|密码'                 =>      'require|max:512',
+        'confirm|二次密码输入'          =>      'confirm:password|max:512',
+        'newPassword|新密码'            =>      'require|max:512',
+        'newConfirm|二次新密码输入'     =>      'require|max:512',
         'email'                         =>      'email|unique:user|max:100',
     ];
 
@@ -34,13 +36,14 @@ class User extends Validate
         'email.unique'      =>      '邮箱已存在',
         'id.number'         =>      'id必须是数字',
         'id.between'        =>      'id必须 1-100 之间',
+        'new.require'        =>      '必须输入新密码',
         'confirm'           =>      '两次输入的密码不一致',
 
     ];
 
     protected $scene = [
         'register'  =>  ['username', 'email', 'password', 'confirm'],
-        'insert'    =>  ['name', 'price', 'email'],
+        'updatePassword'    =>  ['password', 'newConfirm', 'newPassword'],
         'route'     =>  ['id']
     ];
 }
