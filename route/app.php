@@ -24,6 +24,7 @@ Route::group('user', function () {
 Route::group('course', function () {
     Route::POST('', 'createCourse');    //创建课程
     Route::GET('/teach', 'getTeach');   //获取我教的课列表
+    Route::GET('/study', 'getStudy');   //获取我教的课列表
 
 })->prefix('course/')->middleware(['Login']);
 

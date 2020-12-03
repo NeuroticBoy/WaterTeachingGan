@@ -8,6 +8,8 @@ use app\validate\Course as CourseVerify;
 use think\facade\Request;
 
 use app\model\Course as CourseModel;
+use app\model\Classes as ClassesModel;
+use app\model\Member as MemberModel;
 use app\model\User as UserModel;
 use app\controller\Base;
 
@@ -105,5 +107,31 @@ class Course extends Base
 
         //4. 返回数据
         return $this->build($courses);
+    }
+
+    public function getStudy()
+    {
+        //1. 获取用户id
+        $userId = request()->uid;
+
+        //2. 获取听课列表
+        //- 获取班级信息
+        $classes = MemberModel::where('user_id', $userId)->visible(["classes_id"])->select();
+
+        if ($classes->isEmpty()) {
+            return $this->build(NULL, "没有加入课程", 404)->code(404);
+        }
+
+        //- 查询汇总结果
+        $result = [];
+        foreach ($classes as $key => $value) {
+            $courseTitle =  ClassesModel::find($value["classes_id"])->course()->value('title');
+            $result[$key] = [];
+            $result[$key]["classes_id"] = $classes[$key]["classes_id"]; //班级ID
+            $result[$key]["course_title"] = $courseTitle;   //课程标题
+        }
+
+
+        return $this->build($result);
     }
 }
