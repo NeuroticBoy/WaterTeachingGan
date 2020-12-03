@@ -58,6 +58,32 @@ class Classes extends Base
         return $this->build($course, "成功");
     }
 
+    public function deleteClass()
+    {
+        //1. 获取用户ID、班级ID
+        $userId = request()->uid;
+        $classId = Request::route("class_id");
+
+        //2. 判断是否有该课程
+        $class = ClassesModel::with('member')->find($classId);
+        if (!$class) {
+            return $this->build(NULL, "无此课程", 404)->code(404);
+        }
+
+        //3. 判断是否有权限删除
+        $curUser = $class->course()->value('user_id');
+        if ($userId !== $curUser) {
+            return $this->build(NULL, "没有权限", 403)->code(403);
+        }
+
+        //4. 删除课程
+        //TODO: 添加事务处理
+        $class->together(["member"])->where("id", $classId)->delete();
+        $class->member()->where("classes_id", $classId)->delete();
+
+        return $this->build(NULL, "删除成功");
+    }
+
     public function joinClass()
     {
         //1. 获取加课码、USER ID
@@ -117,7 +143,7 @@ class Classes extends Base
         //4. 判断是否为课程创建者
         $curUser = $class->course()->field('user_id')->find();
         if ($curUser["user_id"] !== $user_id) {
-            return $this->build(NULL,"没有操作权限",403)->code(403);
+            return $this->build(NULL, "没有操作权限", 403)->code(403);
         }
 
         //4. 检索数据

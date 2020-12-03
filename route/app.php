@@ -31,6 +31,7 @@ Route::group('course', function () {
 //Classes模块
 Route::group('class', function () {
     Route::POST('', 'createClass'); //创建班级
+    Route::DELETE('/:class_id', 'deleteClass')->pattern(['class_id' => '\d+']); //删除班级
     Route::POST('join/:joinCode', 'joinClass'); //加入班级
     Route::GET('/:class_id/member', 'getMember')->pattern(['class_id' => '\d+']); //加入班级
 })->prefix('classes/')->middleware(['Login']);
