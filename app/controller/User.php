@@ -79,7 +79,7 @@ class User extends Base
 
         //1. 获取基本信息
         $userId = request()->uid;
-        $newData = Request::only($receive_field, 'post');
+        $newData = Request::only($receive_field,'post');
 
         //2. 校验密码
         try {
