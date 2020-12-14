@@ -115,6 +115,20 @@ class User extends Base
         return $this->build();
     }
 
+    public function getMe()
+    {
+        //0. 限制可见字段
+        $hidden_field = ['password', 'update_time', 'delete_time', 'update_password'];  //接收字段
+
+        //1. 获取用户ID
+        $curUser = request()->uid;
+    
+        //2. 获取用户信息
+        $user = UserModel::find($curUser)->hidden($hidden_field);
+
+        //3. 返回用户信息
+        return $this->build($user);
+    }
     public function verifyTest()
     {
         //经过中间件统一认证，通过request()获取在中间件中写入的UID
