@@ -17,6 +17,7 @@ Route::group('user', function () {
     Route::POST('register', 'register');  //注册
     Route::POST('login', 'login');  //登录
     Route::GET('me', 'getMe')->middleware(['Login']);  //获取当前用户信息
+    Route::POST('me/update', 'updateMe')->middleware(['Login']);  //获取当前用户信息
     Route::POST('password/update', 'setPassowrd')->middleware(['Login']);  //登录验证;  //登录
     Route::GET('test', 'verifyTest')->middleware(['Login']);  //登录验证
 })->prefix('user/');

@@ -79,7 +79,7 @@ class User extends Base
 
         //1. 获取基本信息
         $userId = request()->uid;
-        $newData = Request::only($receive_field,'post');
+        $newData = Request::only($receive_field, 'post');
 
         //2. 校验密码
         try {
@@ -122,13 +122,34 @@ class User extends Base
 
         //1. 获取用户ID
         $curUser = request()->uid;
-    
+
         //2. 获取用户信息
         $user = UserModel::find($curUser)->hidden($hidden_field);
 
         //3. 返回用户信息
         return $this->build($user);
     }
+
+    public function updateMe()
+    {
+        //0. 定义可写入字段
+        $write_field = ['username', 'gender', 'school', 'class', 'major', 'grade'];  //接收字段
+        $hidden_field = ['password', 'update_time', 'delete_time', 'update_password'];  //接收字段
+
+        //1. 获取基本信息
+        $curUser = request()->uid;
+        $newData = Request::only($write_field, 'post');
+
+        //2. 获取用户信息
+        $user = UserModel::find($curUser);
+        
+        //3. 更新用户信息
+        $user->save($newData);
+
+        //4. 返回用户信息
+        return $this->build($user->hidden($hidden_field));
+    }
+
     public function verifyTest()
     {
         //经过中间件统一认证，通过request()获取在中间件中写入的UID
