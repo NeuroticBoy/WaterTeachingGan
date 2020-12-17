@@ -15,7 +15,7 @@ class User extends Validate
      * @var array
      */
     protected $rule = [
-        'username|用户名'               =>      'require|max:20',
+        'username|用户名'               =>      'max:20',
         'password|密码'                 =>      'require|max:512',
         'confirm|二次密码输入'          =>      'confirm:password|max:512',
         'newPassword|新密码'            =>      'require|max:512',

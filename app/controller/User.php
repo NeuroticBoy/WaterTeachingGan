@@ -50,23 +50,23 @@ class User extends Base
     public function login()
     {
         $receive_field = ['email', 'password'];  //接收字段
+        $hidden_field = ['password', 'update_time', 'delete_time', 'update_password'];  //接收字段
+
 
         //1. 获取数据
         $receiveEmail = Request::post('email');
         $receivePassword = Request::post('password');
 
         //2. 校验用户
-        $user = UserModel::field('password,id')->where('email', $receiveEmail)->find();
+        $user = UserModel::where('email', $receiveEmail)->find();
 
         //3. 返回Token,JWT
         if ($user && password_verify($receivePassword, $user['password'])) {
             $userId = $user["id"];
 
-            $token = [
-                "token" => JWT::getToken($userId)
-            ];
+            $user['token'] = JWT::getToken($userId);
 
-            return $this->build($token, "登录成功");
+            return $this->build($user->hidden($hidden_field), "登录成功");
         } else {
             return $this->build(NULL, "登录失败")->code(400); //若获取不到密码
         }
@@ -134,7 +134,7 @@ class User extends Base
     {
         //0. 定义可写入字段
         $write_field = ['username', 'gender', 'school', 'class', 'major', 'grade'];  //接收字段
-        $hidden_field = ['password', 'update_time', 'delete_time', 'update_password'];  //接收字段
+        $hidden_field = ['password', 'update_time', 'delete_time', 'update_password'];  //隐藏字段
 
         //1. 获取基本信息
         $curUser = request()->uid;
