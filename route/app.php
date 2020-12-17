@@ -20,7 +20,7 @@ Route::group('user', function () {
     Route::POST('me/update', 'updateMe')->middleware(['Login']);  //获取当前用户信息
     Route::POST('password/update', 'setPassowrd')->middleware(['Login']);  //登录验证;  //登录
     Route::GET('test', 'verifyTest')->middleware(['Login']);  //登录验证
-})->prefix('user/')->allowCrossDomain();
+})->prefix('user/');
 
 //Course模块
 Route::group('course', function () {
@@ -28,7 +28,7 @@ Route::group('course', function () {
     Route::GET('/teach', 'getTeach');   //获取我教的课列表
     Route::GET('/study', 'getStudy');   //获取我教的课列表
 
-})->prefix('course/')->middleware(['Login'])->allowCrossDomain();
+})->prefix('course/')->middleware(['Login']);
 
 //Classes模块
 Route::group('class', function () {
@@ -36,4 +36,4 @@ Route::group('class', function () {
     Route::DELETE('/:class_id', 'deleteClass')->pattern(['class_id' => '\d+']); //删除班级
     Route::POST('join/:joinCode', 'joinClass'); //加入班级
     Route::GET('/:class_id/member', 'getMember')->pattern(['class_id' => '\d+']); //加入班级
-})->prefix('classes/')->middleware(['Login'])->allowCrossDomain();
+})->prefix('classes/')->middleware(['Login']);
