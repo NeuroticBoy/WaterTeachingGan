@@ -21,7 +21,7 @@ class User extends Base
 
     public function register()
     {
-        $receive_field = ['username', 'password', 'email', 'confirm'];  //接收字段
+        $receive_field = ['password', 'email', 'confirm'];  //接收字段
         $visible_field = ['id', 'username', 'email'];  //输出字段
         $write_field = array_slice($receive_field, 0, -1); //写入字段
 
@@ -50,7 +50,7 @@ class User extends Base
     public function login()
     {
         $receive_field = ['email', 'password'];  //接收字段
-        $hidden_field = ['password', 'update_time', 'delete_time', 'update_password'];  //接收字段
+        $hidden_field = ['password', 'update_time', 'delete_time', 'update_password'];  //隐藏字段
 
 
         //1. 获取数据
