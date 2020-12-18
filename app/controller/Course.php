@@ -53,6 +53,33 @@ class Course extends Base
         return $this->build($course, "成功");
     }
 
+    public function deleteCourse()
+    {
+        //1. 获取用户ID、课程ID
+        $curUser = request()->uid;
+        $courseId = Request::route("course_id");
+
+        //2. 判断是否有该课程
+        $course = CourseModel::with('classes')->find($courseId);
+        if (!$course) {
+            return $this->build(NULL, "无此课程", 404)->code(404);
+        }
+
+        // //3. 判断是否有权限删除
+        $userId = $course['user_id'];
+        if ($userId !== $curUser) {
+            return $this->build(null, "没有权限", 403)->code(403);
+        }
+
+        // //4. 删除课程
+        // //TODO: 添加事务处理
+        // TODO: 删除课程对应的用户
+        $course->together(["classes"])->where("id", $courseId)->delete();
+        $course->classes()->where("course_id", $courseId)->delete();
+
+        return $this->build(NULL, "删除成功");
+    }
+
     public function createClass()
     {
         $receive_field = ['title', 'describ', 'course_id'];  //接收字段
