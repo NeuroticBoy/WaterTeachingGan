@@ -39,7 +39,7 @@ class Login extends Base
             return $next($request);
         } else {
             //返回数据
-            return $this->build(NULL, "请登录", 400)->code(400);
+            return $this->build(NULL, "请登录", 401)->code(401);
         }
     }
 }
