@@ -17,7 +17,7 @@ class Course extends Validate
     protected $rule = [
         'title|课程标题'               =>      'require|max:32',
         'describ|描述'                 =>      'max:100',
-        'user_id|用户ID'                      =>      'require',
+        'user_id|用户ID'               =>      'require',
     ];
 
     /**
@@ -33,6 +33,7 @@ class Course extends Validate
     ];
 
     protected $scene = [
-        'create'    =>  ['title', 'describ'],
+        'create'        =>  ['title', 'describ'],
+        'updateCourse'  => ['title', 'describ']
     ];
 }

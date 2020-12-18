@@ -80,6 +80,46 @@ class Course extends Base
         return $this->build(NULL, "删除成功");
     }
 
+    public function updateCourse()
+    {
+        //0. 定义字段
+        $write_field = ['title', 'describ'];  //接收、写入字段
+        $hidden_field = [ 'update_time', 'delete_time'];  //隐藏字段
+
+        //1. 获取用户ID、课程ID
+        $curUser = request()->uid;
+        $courseId = Request::route("course_id");
+
+
+        //2. 判断是否有该课程
+        $course = CourseModel::find($courseId);
+        if (!$course) {
+            return $this->build(NULL, "无此课程", 204)->code(204);
+        }
+
+        //3. 判断是否有权限更新
+        $userId = $course['user_id'];
+        if ($userId !== $curUser) {
+            return $this->build(null, "没有权限", 403)->code(403);
+        }
+
+
+        //4. 获取并校验数据
+        $newData = Request::only($write_field, 'post');
+
+        try {
+            validate(CourseVerify::class)->batch(true)->scene('updateCourse')->check($newData);
+        } catch (ValidateException $e) {
+            return $this->build($e->getError(), "参数错误")->code(400);
+        }
+
+        //5. 更新课程信息
+        $course->save($newData);
+        
+        //6. 返回课程信息
+        return $this->build($course->hidden($hidden_field));
+    }
+
     public function createClass()
     {
         $receive_field = ['title', 'describ', 'course_id'];  //接收字段
