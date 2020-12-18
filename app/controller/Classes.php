@@ -67,7 +67,7 @@ class Classes extends Base
         //2. 判断是否有该课程
         $class = ClassesModel::with('member')->find($classId);
         if (!$class) {
-            return $this->build(NULL, "无此课程", 404)->code(404);
+            return $this->build(NULL, "无此课程", 204)->code(204);
         }
 
         //3. 判断是否有权限删除
@@ -94,7 +94,7 @@ class Classes extends Base
         //- 判断课程是否存在
         $class = ClassesModel::where('code', $code)->find();
         if (!$class) {
-            return $this->build(NULL, "课程不存在", 404)->code(404);
+            return $this->build(NULL, "课程不存在", 204)->code(204);
         }
 
         //- 判断该用户是否加入自己的课程

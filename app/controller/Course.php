@@ -62,7 +62,7 @@ class Course extends Base
         //2. 判断是否有该课程
         $course = CourseModel::with('classes')->find($courseId);
         if (!$course) {
-            return $this->build(NULL, "无此课程", 404)->code(404);
+            return $this->build(NULL, "无此课程", 204)->code(204);
         }
 
         // //3. 判断是否有权限删除
@@ -72,7 +72,7 @@ class Course extends Base
         }
 
         // //4. 删除课程
-        // //TODO: 添加事务处理
+        // TODO: 添加事务处理
         // TODO: 删除课程对应的用户
         $course->together(["classes"])->where("id", $courseId)->delete();
         $course->classes()->where("course_id", $courseId)->delete();
@@ -124,7 +124,7 @@ class Course extends Base
         $courses = $user->course()->visible($visible_field)->select();
 
         if ($courses->isEmpty()) {
-            return $this->build(NULL, "无课程")->code(404);
+            return $this->build(NULL, "无课程")->code(204);
         }
 
         //3. 获取班级列表
@@ -146,7 +146,7 @@ class Course extends Base
         $classes = MemberModel::where('user_id', $userId)->visible(["classes_id"])->select();
 
         if ($classes->isEmpty()) {
-            return $this->build(NULL, "没有加入课程", 404)->code(404);
+            return $this->build(NULL, "没有加入课程", 204)->code(204);
         }
 
         //- 查询汇总结果
