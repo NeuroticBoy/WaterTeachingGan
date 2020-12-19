@@ -28,11 +28,12 @@ class Classes extends Validate
      */
     protected $message = [
         'title.require'      =>      '班级标题不得为空',
-        'title.max'          =>      '班级标题不得超过32个子',
-        'describ.max'        =>      '描述不得大于100位',
+        'title.max'          =>      '班级标题不得超过32个字符',
+        'describ.max'        =>      '班级描述不得超过32个字符',
     ];
 
     protected $scene = [
-        'create'    =>  ['title', 'describ', 'course_id'],
+        'create'        =>  ['title', 'describ', 'course_id'],
+        'updateClass'   => ['title', 'describ']
     ];
 }

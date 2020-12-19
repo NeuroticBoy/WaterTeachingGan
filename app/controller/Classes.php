@@ -81,7 +81,45 @@ class Classes extends Base
         $class->together(["member"])->where("id", $classId)->delete();
         $class->member()->where("classes_id", $classId)->delete();
 
-        return $this->build(NULL, "删除成功");
+        return $this->build($class, "删除成功");
+    }
+
+    public function updateClass()
+    {
+        //0. 定义字段
+        $write_field = ['title', 'describ'];  //接收、写入字段
+        $hidden_field = ['update_time', 'delete_time'];  //隐藏字段
+
+        //1. 获取用户ID、班级ID
+        $curUser = request()->uid;
+        $classId = Request::route("class_id");
+
+        //2. 判断是否有该班级
+        $class = ClassesModel::find($classId);
+        if (!$class) {
+            return $this->build(NULL, "无此班级", 204)->code(204);
+        }
+
+        //3. 判断是否有权限更新课程信息
+        $userId = $class->course()->value('user_id');
+        if ($curUser !== $userId) {
+            return $this->build(NULL, "没有权限更新班级配置", 403)->code(403);
+        }
+
+        //4. 获取并校验数据
+        $newData = Request::only($write_field, 'post');
+
+        try {
+            validate(ClassVerify::class)->batch(true)->scene('updateClass')->check($newData);
+        } catch (ValidateException $e) {
+            return $this->build($e->getError(), "参数错误")->code(400);
+        }
+        
+        //5. 更新班级信息
+        $class->save($newData);
+        
+
+        return $this->build($class->hidden($hidden_field), "更新成功");
     }
 
     public function joinClass()

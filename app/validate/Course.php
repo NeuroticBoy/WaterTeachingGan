@@ -28,8 +28,8 @@ class Course extends Validate
      */
     protected $message = [
         'title.require'      =>      '课程标题不得为空',
-        'title.max'          =>      '课程标题不得超过32个子',
-        'describ.max'        =>      '描述不得大于100位',
+        'title.max'          =>      '课程标题不得超过32个字',
+        'describ.max'        =>      '描述不能超过100个字',
     ];
 
     protected $scene = [
