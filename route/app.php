@@ -25,7 +25,7 @@ Route::group('user', function () {
 //Course模块
 Route::group('course', function () {
     Route::POST('', 'createCourse');    //创建课程
-    Route::DELETE('/:course_id', 'deleteCourse')->pattern(['course_id' => '\d+']); //删除课程
+    Route::DELETE('/:course_id', 'deleteCourse');//->pattern(['course_id' => '\d+']); //删除课程
     Route::POST('/:course_id/update', 'updateCourse')->pattern(['course_id' => '\d+']); //更新课程信息
     Route::GET('/teach', 'getTeach');   //获取我教的课列表
     Route::GET('/study', 'getStudy');   //获取我教的课列表

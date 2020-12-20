@@ -8,12 +8,14 @@ use app\validate\Classes as ClassVerify;
 
 use think\facade\Request;
 use think\facade\Validate;
+use think\facade\Db;
 
 use app\model\User as UserModel;
 use app\model\Classes as ClassesModel;
 use app\model\Member as MemberModel;
 
 use app\controller\Base;
+
 
 class Classes extends Base
 {
@@ -59,16 +61,16 @@ class Classes extends Base
         return $this->build($course, "成功");
     }
 
-    public function deleteClass()
+    public function deleteClass($classid)
     {
         //1. 获取用户ID、班级ID
         $userId = request()->uid;
         $classId = Request::route("class_id");
 
-        //2. 判断是否有该课程
+        //2. 判断是否有该班级
         $class = ClassesModel::with('member')->find($classId);
         if (!$class) {
-            return $this->build(NULL, "无此课程", 204)->code(204);
+            return $this->build(NULL, "无此班级", 204)->code(204);
         }
 
         //3. 判断是否有权限删除
@@ -77,12 +79,24 @@ class Classes extends Base
             return $this->build(NULL, "没有权限", 403)->code(403);
         }
 
-        //4. 删除课程
+        //4. 删除班级
         //TODO: 添加事务处理
-        $class->together(["member"])->where("id", $classId)->delete();
-        $class->member()->where("classes_id", $classId)->delete();
+        
+        
+        Db::startTrans();//启动事务处理
 
-        return $this->build($class, "删除成功");
+            try {
+                //code... 
+                $class->where("id", $classId)->delete();
+                $class->member()->where("classes_id", $classId)->delete();
+
+                Db::commit();//提交
+                return $this->build($class, "删除成功");
+            } catch (\Exception $th) {
+                
+                Db::rollback();//回滚数据
+                echo '执行SQL失败，开始回滚数据';
+            }
     }
 
     public function updateClass()
