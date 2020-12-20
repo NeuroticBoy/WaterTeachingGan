@@ -6,11 +6,14 @@ use think\exception\ValidateException;
 use app\validate\User as UserVerify;
 
 use think\facade\Request;
+use think\facade\Db;
 
 use \JWT as JWT;
 
 use app\model\User as UserModel;
 use app\controller\Base;
+
+
 
 class User extends Base
 {
@@ -21,7 +24,7 @@ class User extends Base
 
     public function register()
     {
-        $receive_field = ['password', 'email', 'confirm'];  //接收字段
+        $receive_field = ['username','password', 'email', 'confirm'];  //接收字段
         $visible_field = ['id', 'username', 'email'];  //输出字段
         $write_field = array_slice($receive_field, 0, -1); //写入字段
 
@@ -32,7 +35,7 @@ class User extends Base
         //2. 校验数据
         try {
             validate(UserVerify::class)->batch(true)->scene('register')->check($register);
-        } catch (ValidateException $e) {
+        } catch (\Exception $e) {
             // throw new HttpException(400, '参数错误！');
             return $this->build($e->getError(), "参数错误")->code(400);
         }
@@ -113,6 +116,20 @@ class User extends Base
         $user->save();
 
         return $this->build();
+        // Db::startTrans();//启动事务处理
+        // try {
+        //     //code... 
+        //     $user["password"] = password_hash($newPassword, PASSWORD_BCRYPT);
+        //     $user["update_password"] = date('Y-m-d H:i:s', time());
+        //     $user->save();
+
+        //     Db::commit();//提交
+        //     return $this->build();
+        // } catch (\Exception $th) {
+            
+        //     Db::rollback();//回滚数据
+        //     echo '执行SQL失败，开始回滚数据';
+        // }
     }
 
     public function getMe()

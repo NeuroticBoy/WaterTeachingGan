@@ -15,7 +15,7 @@ class User extends Validate
      * @var array
      */
     protected $rule = [
-        'username|用户名'               =>      'max:20',
+        'username|用户名'               =>      'require|max:10',
         'password|密码'                 =>      'require|max:512',
         'confirm|二次密码输入'          =>      'confirm:password|max:512',
         'newPassword|新密码'            =>      'require|max:512',
@@ -30,8 +30,8 @@ class User extends Validate
      * @var array
      */
     protected $message = [
-        'name.require'      =>      '姓名不得为空',
-        'name.max'          =>      '姓名不得大于20位',
+        'username.require'      =>      '姓名不得为空',
+        'username.max'          =>      '姓名不能超过10个字符',
         'email'             =>      '邮箱的格式错误',
         'email.unique'      =>      '邮箱已存在',
         'id.number'         =>      'id必须是数字',
