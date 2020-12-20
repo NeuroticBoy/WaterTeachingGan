@@ -115,20 +115,71 @@ class Classes extends Base
         } catch (ValidateException $e) {
             return $this->build($e->getError(), "参数错误")->code(400);
         }
-        
+
         //5. 更新班级信息
         $class->save($newData);
-        
+
 
         return $this->build($class->hidden($hidden_field), "更新成功");
+    }
+
+    public function getClass()
+    {
+        //0. 定义可显示字段
+        $class_visible = ["id", "title", "code", "describ"];
+        $course_visible = ["id", "title", "describ"];
+        $teacher_visible = ["id", "username", "email", "avatar"];
+
+
+        //1. 获取用户ID、班级ID
+        $curUser = request()->uid;
+        $classId = Request::route("class_id");
+
+        //2. 判断是否存在班级
+        $class = ClassesModel::find($classId);
+        if (!$class) {
+            return $this->build(NULL, "课程不存在", 204)->code(204);
+        }
+
+
+        //3. 判断权限：创建此课程或参加此课程
+        $course = $class->course()->find();
+
+        function isTeacher($curUser,$teacherId) {
+            return $curUser === $teacherId;
+        }
+
+        function isMember($curUser, $classId)
+        {
+            return MemberModel::where([
+                "user_id" => $curUser,
+                "classes_id" => $classId
+            ])->find();
+        }
+
+        if (!isTeacher($course["user_id"],$curUser) && !isMember($curUser, $classId)) {
+            return $this->build(NULL, "没有操作权限", 403)->code(403);
+        };
+
+        $teacher = $course->user()->find();
+
+
+        //4. 构建数据
+        $result = [];
+        $result["classes"] = $class->visible($class_visible);
+        $result["course"] = $course->visible($course_visible);
+        $result["teacher"] = $teacher->visible($teacher_visible);
+
+        //5. 返回信息
+        return $this->build($result);
     }
 
     public function joinClass()
     {
         //0. 定义可显示字段
-        $class_visible =["id","title","code","describ"];
-        $course_visible = ["id","title","describ"];
-        $teacher_visible = ["id","username","email","avatar"];
+        $class_visible = ["id", "title", "code", "describ"];
+        $course_visible = ["id", "title", "describ"];
+        $teacher_visible = ["id", "username", "email", "avatar"];
 
         //1. 获取加课码、USER ID
         $code = Request::route('joinCode');
