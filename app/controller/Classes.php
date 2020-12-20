@@ -9,6 +9,7 @@ use app\validate\Classes as ClassVerify;
 use think\facade\Request;
 use think\facade\Validate;
 
+use app\model\User as UserModel;
 use app\model\Classes as ClassesModel;
 use app\model\Member as MemberModel;
 
@@ -124,6 +125,11 @@ class Classes extends Base
 
     public function joinClass()
     {
+        //0. 定义可显示字段
+        $class_visible =["id","title","code","describ"];
+        $course_visible = ["id","title","describ"];
+        $teacher_visible = ["id","username","email","avatar"];
+
         //1. 获取加课码、USER ID
         $code = Request::route('joinCode');
         $userId = request()->uid;
@@ -136,7 +142,7 @@ class Classes extends Base
         }
 
         //- 判断该用户是否加入自己的课程
-        $user = $class->course->value('user_id');
+        $user = $class->course()->value('user_id');
         if ($userId === $user) {
             return $this->build(NULL, "不能加入自己教的课程", 400)->code(400);
         }
@@ -150,7 +156,7 @@ class Classes extends Base
 
         //- 写入数据库
         try {
-            $member = MemberModel::create(["user_id" => $userId, "classes_id" => $classesId], $write_field)->visible($visible_field);
+            MemberModel::create(["user_id" => $userId, "classes_id" => $classesId], $write_field)->visible($visible_field);
         } catch (\Exception $e) {
             $errCode = $e->getCode();
             switch ($errCode) {
@@ -160,8 +166,18 @@ class Classes extends Base
             return $this->build(Null, "未知错误", 500)->code(500);
         }
 
-        //4. 返回数据
-        return $this->build($member);
+        //4. 构造响应信息
+        $class = $class->visible($class_visible);
+        $course = $class->course()->find()->visible($course_visible);
+        $teacher = UserModel::find($course["user_id"])->visible($teacher_visible);
+
+        $result = [];
+        $result["classes"] = $class; //班级ID
+        $result["course"]  = $course;   //课程标题
+        $result["teacher"] = $teacher;   //课程标题
+
+        //5. 返回数据
+        return $this->build($result);
     }
 
     public function getMember()
