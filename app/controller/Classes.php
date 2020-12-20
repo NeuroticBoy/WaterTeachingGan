@@ -234,7 +234,7 @@ class Classes extends Base
     public function getMember()
     {
         //0. 定义可见字段
-        $visible_field = ['user_id', 'nickname', "create_time"];
+        $visible_field = ['id', 'username','number','avatar', 'class','nickname', "create_time"];
 
         //1. 获取班级ID
         $classId = Request::route('class_id');
@@ -252,7 +252,13 @@ class Classes extends Base
         }
 
         //4. 检索数据
-        $members = $class->member()->visible($visible_field)->select();
+        $users = $class->member()->field('user_id')->select();
+        $idArray = [];
+        foreach($users as $key => $velue) {
+            $idArray[$key] = $velue["user_id"];
+        }
+        $members = UserModel::whereIn('id',$idArray)->visible($visible_field)->select();
+        
         return $this->build($members);
     }
 }
