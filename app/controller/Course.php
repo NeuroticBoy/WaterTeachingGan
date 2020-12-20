@@ -178,24 +178,39 @@ class Course extends Base
 
     public function getStudy()
     {
+        //0. 定义可见字段
+        $class_visible =["id","title","code","describ"];
+        $course_visible = ["id","title","describ"];
+        $teacher_visible = ["id","username","email","avatar"];
+
+
         //1. 获取用户id
         $userId = request()->uid;
 
         //2. 获取听课列表
         //- 获取班级信息
-        $classes = MemberModel::where('user_id', $userId)->visible(["classes_id"])->select();
+        $classes = MemberModel::where('user_id', $userId)->select();
 
         if ($classes->isEmpty()) {
             return $this->build(NULL, "没有加入课程", 204)->code(204);
         }
 
+
         //- 查询汇总结果
         $result = [];
         foreach ($classes as $key => $value) {
-            $courseTitle =  ClassesModel::find($value["classes_id"])->course()->value('title');
+            $classId = $value["classes_id"]; //班级ID 
+
+
+            $class = ClassesModel::find($classId)->visible($class_visible);
+            $course = $class->course()->find()->visible($course_visible);
+            $teacher = UserModel::find($course["user_id"])->visible($teacher_visible);
+
+            // $courseTitle =  ClassesModel::find($value["classes_id"])->course()->value('title');
             $result[$key] = [];
-            $result[$key]["classes_id"] = $classes[$key]["classes_id"]; //班级ID
-            $result[$key]["course_title"] = $courseTitle;   //课程标题
+            $result[$key]["classes"] = $class; //班级
+            $result[$key]["course"]  = $course;   //课程
+            $result[$key]["teacher"] = $teacher;   //教师
         }
 
 
