@@ -17,6 +17,14 @@ use app\controller\Base;
 
 class Classes extends Base
 {
+    // static function isTeacher($curUserId,$teacherId) {
+
+    // }
+
+    // static function isMember($curUserId,$classesId) {
+
+    // }
+
     public function index()
     {
 
@@ -231,6 +239,46 @@ class Classes extends Base
         return $this->build($result);
     }
 
+    public function delMember()
+    {
+
+        //0. 定义可接受字段
+        $receive_field = ['class_id','user_id'];
+
+        //1. 获取用户ID、班级ID、用户ID
+        $curUserId = request()->uid;
+        $data = Request::only($receive_field);
+        $delUserId = (int)$data["user_id"];
+        $classId = (int)$data["class_id"];
+
+        //2. 判断权限
+        //TODO 写异常处理
+        //- 判断是否有是该课程的教师
+        $class = ClassesModel::find($classId);
+        if(!$class) {
+            return $this->build(NULL, "课程不存在", 404)->code(404);
+        }
+
+        $teacherId = $class->course()->field('user_id')->find();
+        if ($teacherId["user_id"] !== $curUserId && $delUserId !== $curUserId) { //如果不是删除自己也不是老师
+            return $this->build(NULL, "没有操作权限", 403)->code(403);
+        }
+
+
+        //- 判断成员是否存在
+        $member = MemberModel::where(["user_id" => $delUserId,"classes_id" => $classId])->find();
+        if(!$member) {
+            return $this->build(NULL,"成员不存在")->code(404);
+        }
+
+        //3. 执行删除操作
+        $member->delete();
+
+        //4. 返回报文
+        return $this->build($data);
+
+    }
+
     public function getMember()
     {
         //0. 定义可见字段
@@ -242,8 +290,12 @@ class Classes extends Base
         //2. 获取当前用户ID
         $user_id = request()->uid;
 
+        //TODO: 判断是否存在班级
         //3. 获取班级信息
         $class = ClassesModel::find($classId);
+        if(!$class) {
+            return $this->build(NULL, "课程不存在", 404)->code(404);
+        }
 
         //4. 判断是否为课程创建者
         $curUser = $class->course()->field('user_id')->find();
