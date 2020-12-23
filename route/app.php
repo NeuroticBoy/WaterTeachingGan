@@ -34,6 +34,7 @@ Route::group('course', function () {
 
 //Classes模块
 Route::group('class', function () {
+    Route::DELETE('/:class_id/member/:user_id', 'delMember')->pattern(['class_id' => '\d+','user_id' => '\d+']); //加入班级
     Route::GET('/:class_id/member', 'getMember')->pattern(['class_id' => '\d+']); //加入班级
     Route::POST('', 'createClass'); //创建班级
     Route::DELETE('/:class_id', 'deleteClass')->pattern(['class_id' => '\d+']); //删除班级
@@ -41,3 +42,15 @@ Route::group('class', function () {
     Route::POST('/:class_id/update', 'updateClass')->pattern(['class_id' => '\d+']); //更新班级信息
     Route::POST('join/:joinCode', 'joinClass'); //加入班级
 })->prefix('classes/')->middleware(['Login']);
+
+//Attendance模块
+Route::group('attendance', function () {
+    Route::POST('', 'createAttendance')->pattern(['class_id' => '\d+']); //创建考勤
+    Route::DELETE(':attendance_id', 'deleteAttendance')->pattern(['attendance_id' => '\d+']); //删除考勤
+    Route::POST(':attendance_id/update', 'updateAttendance')->pattern(['attendance_id' => '\d+']); //更新考勤信息
+    Route::GET(':attendance_id', 'getAttendance')->pattern(['attendance_id' => '\d+']); //获取考勤数据
+    Route::GET('class/:class_id', 'getClassAttendance')->pattern(['class_id' => '\d+']); //获取班级考勤列表
+    Route::POST('code/:code', 'signIn'); //输入考勤码进行考勤
+    Route::POST(':attendance_id/user/:user_id', 'updateUserAttendance'); //修改用户考勤状态
+    Route::GET(':attendance_id/user/:user_id', 'getUserAttendance'); //获取用户考勤状态
+})->prefix('Attendance/')->middleware(['Login']);
