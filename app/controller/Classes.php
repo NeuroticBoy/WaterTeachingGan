@@ -61,7 +61,7 @@ class Classes extends Base
         return $this->build($course, "成功");
     }
 
-    public function deleteClass($classid)
+    public function deleteClass()
     {
         //1. 获取用户ID、班级ID
         $userId = request()->uid;
