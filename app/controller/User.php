@@ -5,8 +5,7 @@ namespace app\controller;
 use think\exception\ValidateException;
 use app\validate\User as UserVerify;
 
-use think\facade\Request;
-use think\facade\Db;
+use think\facade\Request; 
 
 use \JWT as JWT;
 
