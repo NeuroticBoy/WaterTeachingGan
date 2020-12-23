@@ -19,12 +19,6 @@ use app\controller\Base;
 
 class Classes extends Base
 {
-    public function index()
-    {
-
-        echo "Hello Here is Course Controller";
-    }
-
     public function createClass()
     {
         $receive_field = ['title', 'describ', 'course_id'];  //接收字段
@@ -80,9 +74,7 @@ class Classes extends Base
         }
 
         //4. 删除班级
-        //TODO: 添加事务处理
-        
-        
+        //DONE: 添加事务处理
         Db::startTrans();//启动事务处理
 
             try {
@@ -95,7 +87,7 @@ class Classes extends Base
             } catch (\Exception $th) {
                 
                 Db::rollback();//回滚数据
-                echo '执行SQL失败，开始回滚数据';
+                return $this->build(NULL,"删除失败，请稍后再试")->code(500);
             }
     }
 
@@ -133,7 +125,6 @@ class Classes extends Base
         //5. 更新班级信息
         $class->save($newData);
 
-
         return $this->build($class->hidden($hidden_field), "更新成功");
     }
 
@@ -154,7 +145,6 @@ class Classes extends Base
         if (!$class) {
             return $this->build(NULL, "课程不存在", 204)->code(204);
         }
-
 
         //3. 判断权限：创建此课程或参加此课程
         $course = $class->course()->find();

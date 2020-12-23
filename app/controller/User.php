@@ -35,7 +35,7 @@ class User extends Base
         //2. 校验数据
         try {
             validate(UserVerify::class)->batch(true)->scene('register')->check($register);
-        } catch (\Exception $e) {
+        } catch (ValidateException $e) {
             // throw new HttpException(400, '参数错误！');
             return $this->build($e->getError(), "参数错误")->code(400);
         }
@@ -116,20 +116,6 @@ class User extends Base
         $user->save();
 
         return $this->build();
-        // Db::startTrans();//启动事务处理
-        // try {
-        //     //code... 
-        //     $user["password"] = password_hash($newPassword, PASSWORD_BCRYPT);
-        //     $user["update_password"] = date('Y-m-d H:i:s', time());
-        //     $user->save();
-
-        //     Db::commit();//提交
-        //     return $this->build();
-        // } catch (\Exception $th) {
-            
-        //     Db::rollback();//回滚数据
-        //     echo '执行SQL失败，开始回滚数据';
-        // }
     }
 
     public function getMe()
