@@ -6,7 +6,7 @@ namespace app\validate;
 
 use think\Validate;
 
-class Classes extends Validate
+class Attendance extends Validate
 {
     /**
      * 定义验证规则
@@ -17,7 +17,7 @@ class Classes extends Validate
     protected $rule = [
         'title|考勤标题'               =>      'require|max:32',
         'describ|描述'                 =>      'max:100',
-        'class_id|课程ID'              =>      'require',
+        'classes_id|课程ID'              =>      'require',
     ];
 
     /**
