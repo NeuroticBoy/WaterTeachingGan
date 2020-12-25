@@ -73,6 +73,26 @@ class Attendance extends Base
         $teacherId = $class->course->value("user_id");
         
 
+
+        //      - 数据整形,去掉左右的空白字符
+        if (array_key_exists('describ', $attenData)) $attenData["describ"] = trim($attenData["describ"]);
+        if (array_key_exists('title', $attenData)) $attenData["title"] = trim($attenData["title"]);
+
+        //      - 校验数据
+        try {
+            validate(AttendanceVerify::class)->batch(true)->scene('create')->check($attenData);
+        } catch (ValidateException $e) {
+            return $this->build($e->getError(), "参数错误")->code(400);
+        }
+
+        //      - 判断班级
+        $class = ClassesModel::find($classId);
+        if(!$class) {
+            return $this->build(NULL, "没有该班级", 204)->code(204);
+        }
+
+        $teacherId = $class->course->value("user_id");
+
         //          TODO 注意INT类型能表示的上限
         if((int)$teacherId !== (int)$curUser) {
             return $this->build(NULL, "没有操作权限", 403)->code(403);
@@ -123,6 +143,37 @@ class Attendance extends Base
                 return $this->build(NULL,"考勤失败，请稍后再试")->code(500);
             }
         
+        $attendance = AttendanceModel::create($attenData, $write_field)->visible($visible_field); //写入attendance记录
+
+       
+        //3. 创建考勤记录
+        //      - 判断考勤类型
+        //           - 0：数字考勤，默认全部旷课
+        //                  0 旷课      - 默认
+        //                  1 出勤
+        //           - 1：传统考勤：默认全部出勤
+        $status = 0;
+
+        if((int)$attenType === 1) {
+            $status = 1;
+        }
+
+        //      - 为班级的每一个人都创建考勤记录
+        $attendanceId = $attendance["id"];
+        $logs = [];
+
+        foreach ($members as $key => $member) {
+            $log = [
+                "attendance_id"     =>      $attendanceId,
+                "user_id"           =>      $member->value("user_id"),
+                "status"            =>      $status,
+            ];
+            $logs[$key] = $log;
+        }
+
+        //      - 写入数据库
+        $AttendanceLog = new AttendanceLogModel;
+        $AttendanceLog->saveAll($logs);
         
         //TODO 限制写入字段
 
@@ -241,6 +292,10 @@ class Attendance extends Base
         
         $attendLog["changes"] = $attendLog["changes"]+1;//修改考勤次数
         $attendLog->save();
+        //- 是
+        //     - 修改考勤记录表记录
+        //- 否
+        //     - 报错
 
         //3. 返回成功信息
         return $this->build($attendLog, "签到成功");
