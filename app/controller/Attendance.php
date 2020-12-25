@@ -145,38 +145,6 @@ class Attendance extends Base
         
         $attendance = AttendanceModel::create($attenData, $write_field)->visible($visible_field); //写入attendance记录
 
-       
-        //3. 创建考勤记录
-        //      - 判断考勤类型
-        //           - 0：数字考勤，默认全部旷课
-        //                  0 旷课      - 默认
-        //                  1 出勤
-        //           - 1：传统考勤：默认全部出勤
-        $status = 0;
-
-        if((int)$attenType === 1) {
-            $status = 1;
-        }
-
-        //      - 为班级的每一个人都创建考勤记录
-        $attendanceId = $attendance["id"];
-        $logs = [];
-
-        foreach ($members as $key => $member) {
-            $log = [
-                "attendance_id"     =>      $attendanceId,
-                "user_id"           =>      $member->value("user_id"),
-                "status"            =>      $status,
-            ];
-            $logs[$key] = $log;
-        }
-
-        //      - 写入数据库
-        $AttendanceLog = new AttendanceLogModel;
-        $AttendanceLog->saveAll($logs);
-        
-        //TODO 限制写入字段
-
         //4. 返回考勤信息
         return $this->build($attendance, "创建成功");
 
