@@ -5,12 +5,14 @@ namespace app\controller;
 use think\exception\ValidateException;
 use app\validate\User as UserVerify;
 
-use think\facade\Request;
+use think\facade\Request; 
 
 use \JWT as JWT;
 
 use app\model\User as UserModel;
 use app\controller\Base;
+
+
 
 class User extends Base
 {

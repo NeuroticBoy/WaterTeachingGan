@@ -8,6 +8,7 @@ use app\validate\Classes as ClassVerify;
 
 use think\facade\Request;
 use think\facade\Validate;
+use think\facade\Db;
 
 use app\model\User as UserModel;
 use app\model\Classes as ClassesModel;
@@ -15,17 +16,11 @@ use app\model\Member as MemberModel;
 
 use app\controller\Base;
 
+
 class Classes extends Base
 {
-    // static function isTeacher($curUserId,$teacherId) {
 
-    // }
-
-    // static function isMember($curUserId,$classesId) {
-
-    // }
-
-    public function index()
+  public function index()
     {
 
         echo "Hello Here is Course Controller";
@@ -73,10 +68,10 @@ class Classes extends Base
         $userId = request()->uid;
         $classId = Request::route("class_id");
 
-        //2. 判断是否有该课程
+        //2. 判断是否有该班级
         $class = ClassesModel::with('member')->find($classId);
         if (!$class) {
-            return $this->build(NULL, "无此课程", 204)->code(204);
+            return $this->build(NULL, "无此班级", 204)->code(204);
         }
 
         //3. 判断是否有权限删除
@@ -85,12 +80,22 @@ class Classes extends Base
             return $this->build(NULL, "没有权限", 403)->code(403);
         }
 
-        //4. 删除课程
-        //TODO: 添加事务处理
-        $class->together(["member"])->where("id", $classId)->delete();
-        $class->member()->where("classes_id", $classId)->delete();
+        //4. 删除班级
+        //DONE: 添加事务处理
+        Db::startTrans();//启动事务处理
 
-        return $this->build($class, "删除成功");
+            try {
+                //code... 
+                $class->where("id", $classId)->delete();
+                $class->member()->where("classes_id", $classId)->delete();
+
+                Db::commit();//提交
+                return $this->build($class, "删除成功");
+            } catch (\Exception $th) {
+                
+                Db::rollback();//回滚数据
+                return $this->build(NULL,"删除失败，请稍后再试")->code(500);
+            }
     }
 
     public function updateClass()
@@ -127,7 +132,6 @@ class Classes extends Base
         //5. 更新班级信息
         $class->save($newData);
 
-
         return $this->build($class->hidden($hidden_field), "更新成功");
     }
 
@@ -148,7 +152,6 @@ class Classes extends Base
         if (!$class) {
             return $this->build(NULL, "课程不存在", 204)->code(204);
         }
-
 
         //3. 判断权限：创建此课程或参加此课程
         $course = $class->course()->find();
